@@ -240,7 +240,7 @@ function initWorker() {
 
 
   
-  worker = new Worker("worker-asm.js");
+  //worker = new Worker("worker-asm.js");
   
 	button.classList.remove("hidden");
   button.classList.add("gray");
@@ -249,7 +249,7 @@ function initWorker() {
   filesElement = document.querySelector("#files");
 
   
-  worker.onmessage = function (event) {
+  /*worker.onmessage = function (event) {
       
       const message = event.data;
       
@@ -314,18 +314,18 @@ function initWorker() {
       if (message.type == "stdout") 
         console.log(message.data + "\n");
         log.innerHTML = message.data;
-    }
+    }*/
 
   }
 
-
+/*
 let workerInitPromise=null;
 
 function initFinished(resolve)
 {
   if(isWorkerLoaded) resolve();
 }
-
+*/
 
 
 
@@ -359,16 +359,25 @@ async function convertVideo2Gif()
 	//let cmnd = `-i input.mp4 -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif`
 	let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
-  
+  //await ffmpeg.run('-i', 'test.avi', 'test.mp4');
+
+	await ffmpeg.run('-i', 'input.mp4','-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
+
   await runCommand(cmnd);
 }
 
 
 
 //Convert webm video to gif:
-async function convertGifToWebm()
+/*async function convertGifToWebm()
 {
   await runCommand('-t 5 -i input.webm -vf showinfo -strict -2 output.gif');
+}*/
+
+
+
+async function runCommand(text) {
+
 }
 
 
@@ -479,4 +488,4 @@ function getDownloadLink(fileData, fileName) {
 
 </script>
 </body>
-
+	

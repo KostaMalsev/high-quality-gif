@@ -235,7 +235,7 @@ async function initWorker() {
 
 
 	//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
-	await ffmpeg = createFFmpeg({ log: true });
+ ffmpeg = await createFFmpeg({ log: true });
 
 
 

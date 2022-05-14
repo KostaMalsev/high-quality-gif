@@ -235,7 +235,7 @@ function initWorker() {
 
 
 	//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
-	ffmpeg = createFFmpeg({ log: true });
+	await ffmpeg = createFFmpeg({ log: true });
 
 
 
@@ -360,7 +360,7 @@ async function convertVideo2Gif()
 	let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
   //await ffmpeg.run('-i', 'test.avi', 'test.mp4');
-	initWorker();
+	await initWorker();
 	
 	let res = await ffmpeg.run('-i', 'input.mp4','-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
 	

@@ -236,6 +236,7 @@ async function initWorker() {
 
 	//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
  ffmpeg = await createFFmpeg({ log: true });
+ await ffmpeg.load();
 
 
 
@@ -454,7 +455,7 @@ function parseArguments(text) {
     }
   });
   return args;
-}
+	}
 
 
 let tmpBlob=null;

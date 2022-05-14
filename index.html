@@ -48,6 +48,10 @@
 <script>
   const { createFFmpeg } = FFmpeg;
   const ffmpeg = createFFmpeg({ log: true });
+	
+	await ffmpeg.run('-i', 'test.avi', 'test.mp4');
+	
+	
 </script>
 
 

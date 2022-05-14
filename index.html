@@ -73,7 +73,7 @@ var running = false;
 var isWorkerLoaded = false;
 
 
-let videoFile='';//tmp
+let videoFile=null;//tmp
 
 
 
@@ -160,7 +160,10 @@ async function readVideo(event) {
 
     if (event.target.files && event.target.files[0]) {
 	
-			videoFile = event.target.files[0];//TBD@@
+			
+			videoFile = await fetchFile(event.target.files[0]);//TBD@@
+			
+			
 			
 			var srcResult = URL.createObjectURL(event.target.files[0]);
 			

@@ -46,10 +46,10 @@
 <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.10.0/dist/ffmpeg.min.js"></script>
 
 <script>
+
   const { createFFmpeg } = FFmpeg;
-  const ffmpeg = createFFmpeg({ log: true });
+	const ffmpeg;
 	
-	await ffmpeg.run('-i', 'test.avi', 'test.mp4');
 	
 	
 </script>
@@ -232,7 +232,14 @@ function initWorker() {
   
   if(isWorkerLoaded) return;
   
-  console.log('Start init worker')
+  console.log('Start init worker');
+
+
+	//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
+	ffmpeg = createFFmpeg({ log: true });
+
+
+
   
   worker = new Worker("worker-asm.js");
   

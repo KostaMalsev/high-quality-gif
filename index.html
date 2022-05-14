@@ -73,6 +73,9 @@ var running = false;
 var isWorkerLoaded = false;
 
 
+let videoFile='';//tmp
+
+
 
 
 //Link to html elements:
@@ -156,6 +159,8 @@ async function readVideo(event) {
 		if (videoDownloadLink) videoDownloadLink.remove();
 
     if (event.target.files && event.target.files[0]) {
+	
+			videoFile = event.target.files[0];//TBD@@
 			
 			var srcResult = URL.createObjectURL(event.target.files[0]);
 			

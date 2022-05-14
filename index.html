@@ -74,7 +74,7 @@ var isWorkerLoaded = false;
 
 
 let videoFile=null;//tmp
-
+let fileName = ''
 
 
 
@@ -162,7 +162,7 @@ async function readVideo(event) {
 	
 			
 			videoFile = await fetchFile(event.target.files[0]);//TBD@@
-			
+			fileName = event.target.files[0];
 			
 			
 			var srcResult = URL.createObjectURL(event.target.files[0]);
@@ -374,7 +374,8 @@ async function convertVideo2Gif()
   //await ffmpeg.run('-i', 'test.avi', 'test.mp4');
 	await initWorker();
 	
-	let res = await ffmpeg.run('-i', 'videoFile','-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
+	ffmpeg.FS('writeFile', fileName, videoFile);
+	let res = await ffmpeg.run('-i', fileName,'-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
 	
 	startRunning();
 	

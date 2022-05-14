@@ -161,7 +161,7 @@ async function readVideo(event) {
     if (event.target.files && event.target.files[0]) {
 	
 			
-			videoFile = event.target.files;//await fetchFile(event.target.files[0]);//TBD@@
+			//videoFile = event.target.files;//
 			fileName = event.target.files[0];
 			
 			
@@ -373,8 +373,8 @@ async function convertVideo2Gif()
 
   //await ffmpeg.run('-i', 'test.avi', 'test.mp4');
 	await initWorker();
-	
-	ffmpeg.FS('writeFile', fileName, videoFile);
+	let fdata = await fetchFile(fileName);//TBD@@
+	ffmpeg.FS('writeFile', fileName, fdata);
 	let res = await ffmpeg.run('-i', fileName,'-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
 	
 	startRunning();

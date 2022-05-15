@@ -25,7 +25,7 @@ input[type="file"] {
 
 .convert-button {
   position: relative;
-  --load: 0%;
+  --load: 0;
 }
 
 .convert-button::after {

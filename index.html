@@ -236,261 +236,183 @@
 
 			async function initWorker() {
 
-				if (isWorkerLoaded) return;
+					if (isWorkerLoaded) return;
 
-				console.log('Start init worker');
-
-
-				//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
-				ffmpeg = await createFFmpeg({
-					log: true
-				});
-				await ffmpeg.load();
+					console.log('Start init worker');
 
 
-
-
-				//worker = new Worker("worker-asm.js");
-
-				button.classList.remove("hidden");
-				button.classList.add("gray");
-				button.innerText = 'Loading engine...';
-
-				filesElement = document.querySelector("#files");
-
-
-				/*worker.onmessage = function (event) {
-      
-      const message = event.data;
-      
-      console.log('Received message:',message.type)
-      
-      
-      if (message.type == "ready") {
-        
-        console.log('Worker is ready');
-
-				button.innerText = 'Converting...';
-        
-        isWorkerLoaded = true;
-        
-        //Run the command:
-        runCommand(command);
-                
-      }
-      
-      if (message.type == "done") {
-      
-          //stopRunning();
-          console.log('worker has finished')
-          
-          var buffers = message.data;
-          
-          button.innerHTML = 'Convert';
-					button.classList.add("hidden");
-					
-					uploadButtons.classList.remove('hidden');
-					
-					imgTag.src = '';
-										
-					videoTag.src = '';
-					videoTag.classList.add('hidden');
-          
-          //Check if conversion succeeded:
-          if(typeof(message.data) == 'undefined' ){
-            log.innerHTML = 'Failed to convert';
-            stopRunning();
-            return;
-          }
-          
-          //Generate the downloadable link:
-          buffers.forEach(function(file) {
-            
-						videoDownloadLink = getDownloadLink(file.data, file.name);
-
-            filesElement.appendChild(videoDownloadLink);
-            
-          });
-          
-          stopRunning();
-
-					log.innerText = '';
-
-      }
-      
-      if (message.type == "start") 
-        console.log("Worker has received command\n");
-      
-      if (message.type == "stdout") 
-        console.log(message.data + "\n");
-        log.innerHTML = message.data;
-    }*/
-
-			}
-
-			/*
-			let workerInitPromise=null;
-
-			function initFinished(resolve)
-			{
-			  if(isWorkerLoaded) resolve();
-			}
-			*/
-
-
-
-			//Convert mp4 264 video to gif:
-			async function convertGifToMp4() {
-
-				//Init the wasm worker:
-				await initWorker();
-
-				//Provide array buffer format image data:
-				const sourceBuffer = sampleImageData;
-
-				//Push it to the worker:
-				ffmpeg.FS(
-					"writeFile",
-					"input.gif",
-					new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
-				);
-
-				//Run the ffmpeg instructions:
-				//let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
-				let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
-
-				startRunning();
-
-				//Fetch the output:
-				const output = ffmpeg.FS("readFile", "output.mp4");
-
-				let videoDownloadLink = getDownloadLink(output, "output.mp4");
-				filesElement.appendChild(videoDownloadLink);
-
-				stopRunning();
-
-				button.innerHTML = 'Convert';
-				button.classList.add("hidden");
-
-				uploadButtons.classList.remove('hidden');
-
-				imgTag.src = '';
-
-				videoTag.src = '';
-				videoTag.classList.add('hidden');
-
-			}
-
-
-
-			//Convert gif to mp4 264 format video:
-			async function convertVideo2Gif() {
-
-				let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
-
-				await initWorker();
-
-				const sourceBuffer = sampleVideoData; //await fetch(fileName).then(r => r.arrayBuffer());
-
-				ffmpeg.FS(
-					"writeFile",
-					"input.mp4",
-					new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
-				);
-
-				//Run the ffmpeg:	
-				let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
-
-				startRunning();
-
-				//Retrieve the result:
-				const output = ffmpeg.FS("readFile", "output.gif");
-
-				//Provide downloadable link to file:
-				let videoDownloadLink = getDownloadLink(output, "output.gif");
-				filesElement.appendChild(videoDownloadLink);
-
-				stopRunning();
-				
-				button.innerHTML = 'Convert';
-				button.classList.add("hidden");
-
-				uploadButtons.classList.remove('hidden');
-
-				imgTag.src = '';
-
-				videoTag.src = '';
-				videoTag.classList.add('hidden');
-
-			}
+					//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
+					ffmpeg = await createFFmpeg({
+						log: true
+					});
+					await ffmpeg.load();
 
 
 
 
-			function startRunning() {
-				//document.querySelector("#image-loader").style.visibility = "visible";
-				//outputElement.className = "";
-				//filesElement.innerHTML = "";
-				button.innerHTML = 'Converting...';
-				running = true;
-			}
+					//worker = new Worker("worker-asm.js");
 
+					button.classList.remove("hidden");
+					button.classList.add("gray");
+					button.innerText = 'Loading engine...';
 
-
-			function stopRunning() {
-				//document.querySelector("#image-loader").style.visibility = "hidden";
-				button.innerHTML = 'Convert';
-				running = false;
-			}
+					filesElement = document.querySelector("#files");
 
 
 
 
-			function parseArguments(text) {
+					//Convert mp4 264 video to gif:
+					async function convertGifToMp4() {
 
-				text = text.replace(/\s+/g, ' ');
-				var args = [];
-				// Allow double quotes to not split args.
-				text.split('"').forEach(function(t, i) {
-					t = t.trim();
-					if ((i % 2) === 1) {
-						args.push(t);
-					} else {
-						args = args.concat(t.split(" "));
+						//Init the wasm worker:
+						await initWorker();
+
+						//Provide array buffer format image data:
+						const sourceBuffer = sampleImageData;
+
+						//Push it to the worker:
+						ffmpeg.FS(
+							"writeFile",
+							"input.gif",
+							new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+						);
+
+						//Run the ffmpeg instructions:
+						//let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
+						let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
+
+						startRunning();
+
+						//Fetch the output:
+						const output = ffmpeg.FS("readFile", "output.mp4");
+
+						let videoDownloadLink = getDownloadLink(output, "output.mp4");
+						filesElement.appendChild(videoDownloadLink);
+
+						stopRunning();
+
+						button.innerHTML = 'Convert';
+						button.classList.add("hidden");
+
+						uploadButtons.classList.remove('hidden');
+
+						imgTag.src = '';
+
+						videoTag.src = '';
+						videoTag.classList.add('hidden');
 
 					}
-				});
-				return args;
-			}
 
 
-			let tmpBlob = null;
 
-			//Generate downloadable link
-			function getDownloadLink(fileData, fileName) {
+					//Convert gif to mp4 264 format video:
+					async function convertVideo2Gif() {
 
-				if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
+						let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
-					var blob = new Blob([fileData]);
-					var src = window.URL.createObjectURL(blob);
-					var img = document.createElement('img');
+						await initWorker();
 
-					img.src = src;
-					return img;
+						const sourceBuffer = sampleVideoData; //await fetch(fileName).then(r => r.arrayBuffer());
 
-				} else {
+						ffmpeg.FS(
+							"writeFile",
+							"input.mp4",
+							new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+						);
 
-					var a = document.createElement('a');
+						//Run the ffmpeg:	
+						let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
-					a.classList.add('button');
+						startRunning();
 
-					a.download = fileName;
-					var blob = new Blob([fileData]);
-					var src = window.URL.createObjectURL(blob);
-					a.href = src;
-					a.textContent = 'Download result';
-					return a;
-				}
-			}
+						//Retrieve the result:
+						const output = ffmpeg.FS("readFile", "output.gif");
+
+						//Provide downloadable link to file:
+						let videoDownloadLink = getDownloadLink(output, "output.gif");
+						filesElement.appendChild(videoDownloadLink);
+
+						stopRunning();
+
+						button.innerHTML = 'Convert';
+						button.classList.add("hidden");
+
+						uploadButtons.classList.remove('hidden');
+
+						imgTag.src = '';
+
+						videoTag.src = '';
+						videoTag.classList.add('hidden');
+
+					}
+
+
+
+
+					function startRunning() {
+						//document.querySelector("#image-loader").style.visibility = "visible";
+						//outputElement.className = "";
+						//filesElement.innerHTML = "";
+						button.innerHTML = 'Converting...';
+						running = true;
+					}
+
+
+
+					function stopRunning() {
+						//document.querySelector("#image-loader").style.visibility = "hidden";
+						button.innerHTML = 'Convert';
+						running = false;
+					}
+
+
+
+
+					function parseArguments(text) {
+
+						text = text.replace(/\s+/g, ' ');
+						var args = [];
+						// Allow double quotes to not split args.
+						text.split('"').forEach(function(t, i) {
+							t = t.trim();
+							if ((i % 2) === 1) {
+								args.push(t);
+							} else {
+								args = args.concat(t.split(" "));
+
+							}
+						});
+						return args;
+					}
+
+
+					let tmpBlob = null;
+
+					//Generate downloadable link
+					function getDownloadLink(fileData, fileName) {
+
+						if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
+
+							var blob = new Blob([fileData]);
+							var src = window.URL.createObjectURL(blob);
+							var img = document.createElement('img');
+
+							img.src = src;
+							return img;
+
+						} else {
+
+							var a = document.createElement('a');
+
+							a.classList.add('button');
+
+							a.download = fileName;
+							var blob = new Blob([fileData]);
+							var src = window.URL.createObjectURL(blob);
+							a.href = src;
+							a.textContent = 'Download result';
+							return a;
+						}
+					}
 		</script>
 </body>

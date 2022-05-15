@@ -106,10 +106,10 @@
 
 
 
-			//Image loader:
+			//Set up Image and video uploaders:
 			window.addEventListener('load', async function() {
 
-
+				//Image loader:
 				imageUploadButton.addEventListener('change', async function() {
 
 					if (videoDownloadLink) videoDownloadLink.remove();
@@ -143,11 +143,7 @@
 					}
 				});
 
-
-
-
 				inputTag.addEventListener('change', readVideo);
-
 
 				//Read video from url
 				async function readVideo(event) {
@@ -192,6 +188,7 @@
 				}
 
 			});
+			
 
 
 			//Push blob to arrayBuffer of image
@@ -337,14 +334,10 @@
 
 					}
 
-
-
-
 			function startRunning() {
 						button.innerHTML = 'Converting...';
 						running = true;
 					}
-
 
 
 			function stopRunning() {
@@ -353,8 +346,8 @@
 					}
 
 
-					//Generate downloadable link
-					function getDownloadLink(fileData, fileName) {
+			//Generate downloadable link
+			function getDownloadLink(fileData, fileName) {
 
 						if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
 

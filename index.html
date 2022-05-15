@@ -319,7 +319,7 @@
 						
 						ffmpeg.setProgress(({ ratio }) => {
 							
-							button.style.setProperty('--load', (ratio * 100) + '%');
+							button.style.setProperty('--load', ratio);
 	
 						});
 						

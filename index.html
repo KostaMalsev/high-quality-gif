@@ -320,6 +320,10 @@
 						ffmpeg.setProgress(({ ratio }) => {
 							
 							button.style.setProperty('--load', ratio);
+							
+							if (ratio !== 0) {
+								button.innerText = 'Converting...';
+							}
 	
 						});
 						
@@ -350,7 +354,7 @@
 					}
 
 			function startRunning() {
-						button.innerHTML = 'Converting...';
+						button.innerHTML = 'Processing...';
 						running = true;
 					}
 

@@ -346,6 +346,27 @@ async function convertGifToMp4()
 {
   //await runCommand('-i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" -b:v 0 -crf 25 -f mp4 -vcodec libx264 -pix_fmt yuv420p output.mp4');
 	let cmnd = '-i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" -b:v 0 -crf 25 -f mp4 -vcodec libx264 -pix_fmt yuv420p output.mp4'
+	await initWorker();
+	const sourceBuffer = sampleImageData;
+	
+	ffmpeg.FS(
+  	"writeFile",
+  	"input.gif",
+  	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+	);
+	
+	let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
+	
+	//ffmpeg.FS('writeFile', fileName, sampleVideoData);//await fetchFile(files[0]));
+	
+	//let res = await ffmpeg.run('-i', fileName,'-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
+	
+	startRunning();
+	
+	const output = ffmpeg.FS("readFile", "output.gif");
+	
+	let videoDownloadLink = getDownloadLink(output, "output.gif");
+	filesElement.appendChild(videoDownloadLink);
 
 }
 
@@ -378,8 +399,6 @@ async function convertVideo2Gif()
 	//let fdata = await fetchFile(fileName);//TBD@@
 	//ffmpeg.FS('writeFile', fileName, fdata);
 	const sourceBuffer = sampleVideoData;//await fetch(fileName).then(r => r.arrayBuffer());
-
-	console.log (sourceBuffer);
 	
 	ffmpeg.FS(
   	"writeFile",

@@ -366,9 +366,9 @@ async function convertGifToMp4()
 	startRunning();
 	
 	//Fetch the output:
-	const output = ffmpeg.FS("readFile", "output.gif");
+	const output = ffmpeg.FS("readFile", "output.mp4");
 	
-	let videoDownloadLink = getDownloadLink(output, "output.gif");
+	let videoDownloadLink = getDownloadLink(output, "output.mp4");
 	filesElement.appendChild(videoDownloadLink);
 	
 	stopRunning();

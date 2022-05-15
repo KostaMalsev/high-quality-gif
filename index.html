@@ -346,23 +346,31 @@ async function convertGifToMp4()
 {
   //await runCommand('-i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" -b:v 0 -crf 25 -f mp4 -vcodec libx264 -pix_fmt yuv420p output.mp4');
 	let cmnd = '-i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" -b:v 0 -crf 25 -f mp4 -vcodec libx264 -pix_fmt yuv420p output.mp4'
+	
+	//Init the wasm worker:
 	await initWorker();
+	
+	//Provide array buffer format image data:
 	const sourceBuffer = sampleImageData;
 	
+	//Push it to the worker:
 	ffmpeg.FS(
   	"writeFile",
   	"input.gif",
   	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
 	);
 	
+	//Run the ffmpeg instructions:
 	let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
 		
 	startRunning();
 	
+	//Fetch the output:
 	const output = ffmpeg.FS("readFile", "output.gif");
 	
 	let videoDownloadLink = getDownloadLink(output, "output.gif");
 	filesElement.appendChild(videoDownloadLink);
+	
 	stopRunning();
 
 }

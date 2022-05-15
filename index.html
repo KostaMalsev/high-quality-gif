@@ -358,28 +358,6 @@
 					}
 
 
-
-
-					function parseArguments(text) {
-
-						text = text.replace(/\s+/g, ' ');
-						var args = [];
-						// Allow double quotes to not split args.
-						text.split('"').forEach(function(t, i) {
-							t = t.trim();
-							if ((i % 2) === 1) {
-								args.push(t);
-							} else {
-								args = args.concat(t.split(" "));
-
-							}
-						});
-						return args;
-					}
-
-
-					let tmpBlob = null;
-
 					//Generate downloadable link
 					function getDownloadLink(fileData, fileName) {
 
@@ -406,5 +384,7 @@
 							return a;
 						}
 					}
+					
+					
 		</script>
 </body>

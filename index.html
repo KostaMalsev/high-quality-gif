@@ -375,6 +375,19 @@ async function convertVideo2Gif()
 	await initWorker();
 	//let fdata = await fetchFile(fileName);//TBD@@
 	//ffmpeg.FS('writeFile', fileName, fdata);
+	const sourceBuffer = await fetch(fileName).then(r => r.arrayBuffer());
+
+	console.log (sourceBuffer);
+	
+	ffmpeg.FS(
+  	"writeFile",
+  	"input.mp4",
+  	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+	);
+	//ffmpeg.FS('writeFile', 'input.mp4', sampleVideoData);//await fetchFile(files[0]));
+	
+	let res = await ffmpeg.run('-i', 'input.mp4','-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
+	
 	ffmpeg.FS('writeFile', fileName, sampleVideoData);//await fetchFile(files[0]));
 	
 	let res = await ffmpeg.run('-i', fileName,'-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');

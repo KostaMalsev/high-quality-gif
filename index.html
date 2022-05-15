@@ -383,7 +383,7 @@
 
 							var blob = new Blob([fileData]);
 							
-							const	fileToShare = new File(blob);
+							const	fileToShare = new File(blob, fileName);
 							
 							navigator.share({
 						    files: fileToShare,

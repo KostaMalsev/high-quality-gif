@@ -225,8 +225,6 @@
 			}
 
 
-
-
 			var videoDownloadLink;
 
 			async function initWorker() {
@@ -236,7 +234,6 @@
 					console.log('Start init worker');
 
 
-					//await ffmpeg.run('-i', 'test.avi', 'test.mp4');
 					ffmpeg = await createFFmpeg({
 						log: true
 					});
@@ -250,10 +247,8 @@
 					filesElement = document.querySelector("#files");
 
 
-
-
-					//Convert mp4 264 video to gif:
-					async function convertGifToMp4() {
+			//Convert mp4 264 video to gif:
+			async function convertGifToMp4() {
 
 						//Init the wasm worker:
 						await initWorker();

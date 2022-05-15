@@ -391,10 +391,8 @@ async function convertVideo2Gif()
 	//let cmnd = `-i input.mp4 -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif`
 	let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
-  //await ffmpeg.run('-i', 'test.avi', 'test.mp4');
 	await initWorker();
-	//let fdata = await fetchFile(fileName);//TBD@@
-	//ffmpeg.FS('writeFile', fileName, fdata);
+	
 	const sourceBuffer = sampleVideoData;//await fetch(fileName).then(r => r.arrayBuffer());
 	
 	ffmpeg.FS(

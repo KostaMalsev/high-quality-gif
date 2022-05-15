@@ -248,10 +248,6 @@
 					await ffmpeg.load();
 
 
-
-
-					//worker = new Worker("worker-asm.js");
-
 					button.classList.remove("hidden");
 					button.classList.add("gray");
 					button.innerText = 'Loading engine...';
@@ -350,9 +346,6 @@
 
 
 					function startRunning() {
-						//document.querySelector("#image-loader").style.visibility = "visible";
-						//outputElement.className = "";
-						//filesElement.innerHTML = "";
 						button.innerHTML = 'Converting...';
 						running = true;
 					}

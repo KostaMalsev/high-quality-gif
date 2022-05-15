@@ -39,6 +39,7 @@ input[type="file"] {
 }
 
 .convert-button[style="--load:0;"]::after {
+  clip-path: inset(0 calc(100% - (1 * 100%)) 0 0);
   animation: 1s button-load infinite;
 }
 

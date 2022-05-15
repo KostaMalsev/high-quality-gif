@@ -402,18 +402,16 @@ async function convertVideo2Gif()
   	"input.mp4",
   	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
 	);
-	//ffmpeg.FS('writeFile', 'input.mp4', sampleVideoData);//await fetchFile(files[0]));
-	
+
+	//Run the ffmpeg:	
 	let res = await ffmpeg.run('-i', 'input.mp4','-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
-	
-	//ffmpeg.FS('writeFile', fileName, sampleVideoData);//await fetchFile(files[0]));
-	
-	//let res = await ffmpeg.run('-i', fileName,'-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse','output.gif');
 	
 	startRunning();
 	
+	//Retrieve the result:
 	const output = ffmpeg.FS("readFile", "output.gif");
 	
+	//Provide downloadable link to file:
 	let videoDownloadLink = getDownloadLink(output, "output.gif");
 	filesElement.appendChild(videoDownloadLink);
 	stopRunning();

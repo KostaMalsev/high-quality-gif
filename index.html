@@ -268,9 +268,10 @@
 						button.innerText = 'Processing...';
 						//Run the ffmpeg instructions:
 						//let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
+						startRunning();
 						let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
 
-						startRunning();
+						
 
 						//Fetch the output:
 						const output = ffmpeg.FS("readFile", "output.mp4");
@@ -310,14 +311,12 @@
 						);
 						
 						button.innerText = 'Processing...';
+						startRunning();
 						
 						//Run the ffmpeg:	
 						let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
-						startRunning();
-						button.innerText = 'Processing...';
-
-
+						
 						//Retrieve the result:
 						const output = ffmpeg.FS("readFile", "output.gif");
 

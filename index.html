@@ -226,6 +226,8 @@
 
 			var videoDownloadLink;
 
+
+			//Init the ffmpeg worker
 			async function initWorker() {
 
 					if (isWorkerLoaded) return;
@@ -236,13 +238,13 @@
 					ffmpeg = await createFFmpeg({
 						log: true
 					});
-					await ffmpeg.load();
-
-
+					
 					button.classList.remove("hidden");
 					button.classList.add("gray");
 					button.innerText = 'Loading engine...';
-
+					
+					await ffmpeg.load();
+					
 					filesElement = document.querySelector("#files");
 					
 				}

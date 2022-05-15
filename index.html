@@ -375,7 +375,7 @@ async function convertVideo2Gif()
 	await initWorker();
 	//let fdata = await fetchFile(fileName);//TBD@@
 	//ffmpeg.FS('writeFile', fileName, fdata);
-	const sourceBuffer = await fetch(fileName).then(r => r.arrayBuffer());
+	const sourceBuffer = sampleVideoData;//await fetch(fileName).then(r => r.arrayBuffer());
 
 	console.log (sourceBuffer);
 	

@@ -264,7 +264,6 @@
 
 						button.innerText = 'Processing...';
 						//Run the ffmpeg instructions:
-						//let res = await ffmpeg.run('-i', 'input.gif','-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2','-b:v','0','-crf','25','-f','mp4','-vcodec','libx264','-pix_fmt','yuv420','output.mp4');
 						startRunning();
 						let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
 

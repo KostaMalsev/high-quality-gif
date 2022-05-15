@@ -343,11 +343,17 @@
 						//Provide downloadable link to file:
 						let videoDownloadLink = getDownloadLink(output, "output.gif");
 						filesElement.appendChild(videoDownloadLink);
-
+						
+						videoDownloadLink.click();
+						
 						stopRunning();
 
 						button.innerHTML = 'Convert';
-						button.classList.add("hidden");
+						button.classList.add('hidden');
+						button.classList.remove('gray');
+						button.style.setProperty('--load', 0);
+						
+						
 
 						uploadButtons.classList.remove('hidden');
 
@@ -376,11 +382,13 @@
 						if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
 
 							var blob = new Blob([fileData]);
-							var src = window.URL.createObjectURL(blob);
-							var img = document.createElement('img');
-
-							img.src = src;
-							return img;
+							var src = URL.createObjectURL(blob);
+							
+							var a = document.createElement('a');
+							a.href = src;
+							a.download = fileName;
+							
+							return a;
 
 						} else {
 

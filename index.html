@@ -342,9 +342,10 @@
 
 						//Provide downloadable link to file:
 						let videoDownloadLink = getDownloadLink(output, "output.gif");
-						//filesElement.appendChild(videoDownloadLink);
+  if (videoDownloadLink) {
+						filesElement.appendChild(videoDownloadLink);
 						
-						//videoDownloadLink.click();
+						videoDownloadLink.click();}
 						
 						stopRunning();
 
@@ -383,21 +384,25 @@
 
 							var blob = new Blob([fileData]);
 							
-							const	fileToShare = new File([blob], fileName);
+              if (navigator.share) {
+  							const	fileToShare = new File([blob], fileName);
+  							
+  							navigator.share({
+  						    files: fileToShare,
+  						    title: 'Converted GIF',
+  						    text: 'Converted GIF',
+  						  });
+              }  else {
 							
-							navigator.share({
-						    files: fileToShare,
-						    title: 'Converted GIF',
-						    text: 'Converted GIF',
-						  });
-							
-						/*	var src = URL.createObjectURL(blob);
+							var src = URL.createObjectURL(blob);
 							
 							var a = document.createElement('a');
 							a.href = src;
 							a.download = fileName;
 							
-							return a;*/
+							return a;
+              
+              }
 
 						} else {
 
@@ -415,6 +420,7 @@
 					}
 					
 					
-		</script>
+		
+</script>
 		
 </body>

@@ -178,11 +178,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: center;
   flex-flow: column;
-  /*pointer-events: none;*/
-  /*transition: .4s var(--cubic-function);*/
   z-index: 10000;
   will-change: transform;
-  /*transform: translateX(100%);*/
 }
 
 .dialog.visible {

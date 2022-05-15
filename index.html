@@ -396,8 +396,8 @@ async function convertVideo2Gif()
 	
 	const output = ffmpeg.FS("readFile", "output.gif");
 	
-	
-
+	let out = URL.createObjectURL(new Blob([output.buffer], { type: "image" })
+	console.log('Result:',out);
 	
   //await runCommand(cmnd);
 }

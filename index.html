@@ -274,6 +274,7 @@
 						button.innerText = 'Processing...';
 
 
+
 						//Fetch the output:
 						const output = ffmpeg.FS("readFile", "output.mp4");
 
@@ -282,7 +283,7 @@
 
 						stopRunning();
 
-						button.innerHTML = 'Convert';
+						button.innerText = 'Convert...';
 						button.classList.add("hidden");
 
 						uploadButtons.classList.remove('hidden');

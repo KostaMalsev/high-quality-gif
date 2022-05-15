@@ -411,6 +411,16 @@
 				filesElement.appendChild(videoDownloadLink);
 
 				stopRunning();
+				
+				button.innerHTML = 'Convert';
+				button.classList.add("hidden");
+
+				uploadButtons.classList.remove('hidden');
+
+				imgTag.src = '';
+
+				videoTag.src = '';
+				videoTag.classList.add('hidden');
 
 			}
 

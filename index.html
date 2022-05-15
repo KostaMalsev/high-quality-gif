@@ -236,6 +236,9 @@
 					
 					button.classList.remove("hidden");
 					button.classList.add("gray");
+					
+					button.style.setProperty('--load', 0);
+					
 					button.innerText = 'Loading engine...';
 					
 					await ffmpeg.load();

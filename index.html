@@ -357,7 +357,7 @@ async function convertGifToMp4()
 	ffmpeg.FS(
   	"writeFile",
   	"input.gif",
-  	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength);
+  	new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
 	);
 	
 	//Run the ffmpeg instructions:

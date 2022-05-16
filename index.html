@@ -259,7 +259,11 @@
 
         ffmpeg.setProgress(({ratio}) => {
 
-          console.log(ratio);
+          button.style.setProperty('--load', ratio);
+
+          if (ratio !== 0) {
+            button.innerText = 'Converting...';
+          }
 
         });
 

@@ -263,15 +263,13 @@
         );
 
         button.innerText = 'Processing...';
+
         //Run the ffmpeg instructions:
         startRunning();
 
-        ffmpeg.setProgress(({
-          ratio
-        }) => {
+        ffmpeg.setProgress(({ratio}) => {
 
           console.log(ratio);
-
 
         });
 

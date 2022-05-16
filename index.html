@@ -1,424 +1,424 @@
-
-
 <head>
-	<title>Create Gif</title>
-	<meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
-	<meta charset="utf-8">
+  <title>Create Gif</title>
+  <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+  <meta charset="utf-8">
 
-	<link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css">
 
 </head>
 
 <body>
 
-	<div class="dialog">
+  <div class="dialog">
 
-		<div class="subtitle" id='log'> </div>
+    <div class="subtitle" id='log'> </div>
 
-		<div class="button-wrapper upload-buttons">
+    <div class="button-wrapper upload-buttons">
 
-			<input type="file" accept="video/*" id="input-tag" multiple />
-			<label for="input-tag">
-				<div class="button">Video to GIF</div>
-			</label>
+      <input type="file" accept="video/*" id="input-tag" multiple />
+      <label for="input-tag">
+        <div class="button">Video to GIF</div>
+      </label>
 
-			<input type="file" accept="image/gif" id="image-upload" multiple />
-			<label for="image-upload">
-				<div class="button">GIF to video</div>
-			</label>
+      <input type="file" accept="image/gif" id="image-upload" multiple />
+      <label for="image-upload">
+        <div class="button">GIF to video</div>
+      </label>
 
-		</div>
+    </div>
 
-		<br>
+    <br>
 
-		<img id="img-tag">
+    <img id="img-tag">
 
-		<video controls id="video-tag" class="hidden" style="height:100px"></video>
+    <video controls id="video-tag" class="hidden" style="height:100px"></video>
 
-		<br>
+    <br>
 
-		<div class="button convert-button hidden">Convert</div>
-		<div id="files"></div>
+    <div class="button convert-button hidden">Convert</div>
+    <div id="files"></div>
 
 
-		<script src="ffmpeg.min.js"></script>
+    <script src="ffmpeg.min.js"></script>
 
 
-		<script>
-			//Define ffmpeg:
-			const {createFFmpeg} = FFmpeg;
-			
-			let ffmpeg;
-		</script>
+    <script>
+      //Define ffmpeg:
+      const {
+        createFFmpeg
+      } = FFmpeg;
 
+      let ffmpeg;
+    </script>
 
 
 
-		<script>
-		
-			var worker;
-			var sampleImageData = null;
-			var sampleVideoData = null;
-			var outputElement;
-			var filesElement;
-			var running = false;
-			var isWorkerLoaded = false;
 
+    <script>
+      var worker;
+      var sampleImageData = null;
+      var sampleVideoData = null;
+      var outputElement;
+      var filesElement;
+      var running = false;
+      var isWorkerLoaded = false;
 
-			let videoFile = null; //tmp
-			let fileName = ''
 
+      let videoFile = null; //tmp
+      let fileName = ''
 
 
-			//Link to html elements:
-			const uploadButtons = document.querySelector('.upload-buttons');
-			const imageUploadButton = document.querySelector('#image-upload');
-			const videoTag = document.querySelector("#video-tag");
-			const inputTag = document.querySelector("#input-tag");
-			const log = document.querySelector('#log');
-			const vFigure = document.querySelector('#videoContainer');
-			const imgTag = document.querySelector('#img-tag');
 
+      //Link to html elements:
+      const uploadButtons = document.querySelector('.upload-buttons');
+      const imageUploadButton = document.querySelector('#image-upload');
+      const videoTag = document.querySelector("#video-tag");
+      const inputTag = document.querySelector("#input-tag");
+      const log = document.querySelector('#log');
+      const vFigure = document.querySelector('#videoContainer');
+      const imgTag = document.querySelector('#img-tag');
 
-			let button = document.querySelector(".convert-button");
 
+      let button = document.querySelector(".convert-button");
 
-			let command = "";
 
+      let command = "";
 
 
-			//Check if worker is supported:
-			var isSupported = (function() {
-				return document.querySelector && window.URL && window.Worker;
-			})();
 
+      //Check if worker is supported:
+      var isSupported = (function() {
+        return document.querySelector && window.URL && window.Worker;
+      })();
 
 
-			//Check if worker is ready to run:
-			function isReady() {
-				return !running && isWorkerLoaded;
-			}
 
+      //Check if worker is ready to run:
+      function isReady() {
+        return !running && isWorkerLoaded;
+      }
 
 
 
-			//Set up Image and video uploaders:
-			window.addEventListener('load', async function() {
 
-				//Image loader:
-				imageUploadButton.addEventListener('change', async function() {
+      //Set up Image and video uploaders:
+      window.addEventListener('load', async function() {
 
-					if (videoDownloadLink) videoDownloadLink.remove();
+        //Image loader:
+        imageUploadButton.addEventListener('change', async function() {
 
-					if (this.files && this.files[0]) {
+          if (videoDownloadLink) videoDownloadLink.remove();
 
-						imgTag.onload = () => {
-							URL.revokeObjectURL(imgTag.src); // no longer needed, free memory
-						}
+          if (this.files && this.files[0]) {
 
-						imgTag.src = URL.createObjectURL(this.files[0]); // set src to blob url
+            imgTag.onload = () => {
+              URL.revokeObjectURL(imgTag.src); // no longer needed, free memory
+            }
 
-						//Generate blob from url:
-						let blob = await fetch(imgTag.src).then(r => r.blob());
+            imgTag.src = URL.createObjectURL(this.files[0]); // set src to blob url
 
-						//Convert image to buffer Array:
-						retreiveImage(blob);
+            //Generate blob from url:
+            let blob = await fetch(imgTag.src).then(r => r.blob());
 
-						// show convert button
-						button.classList.remove('hidden', 'gray');
+            //Convert image to buffer Array:
+            retreiveImage(blob);
 
-						uploadButtons.classList.add('hidden');
+            // show convert button
+            button.classList.remove('hidden', 'gray');
 
-						//Set to convert gif to video:
-						button.removeEventListener('click', convertVideo2Gif);
-						button.removeEventListener('click', convertGifToMp4);
+            uploadButtons.classList.add('hidden');
 
-						//Attach run command to convert button
-						button.addEventListener('click', convertGifToMp4);
+            //Set to convert gif to video:
+            button.removeEventListener('click', convertVideo2Gif);
+            button.removeEventListener('click', convertGifToMp4);
 
-					}
-				});
+            //Attach run command to convert button
+            button.addEventListener('click', convertGifToMp4);
 
-				inputTag.addEventListener('change', readVideo);
+          }
+        });
 
-				//Read video from url
-				async function readVideo(event) {
+        inputTag.addEventListener('change', readVideo);
 
-					if (videoDownloadLink) videoDownloadLink.remove();
+        //Read video from url
+        async function readVideo(event) {
 
-					if (event.target.files && event.target.files[0]) {
+          if (videoDownloadLink) videoDownloadLink.remove();
 
-						fileName = event.target.files[0];
+          if (event.target.files && event.target.files[0]) {
 
-						var srcResult = URL.createObjectURL(event.target.files[0]);
+            fileName = event.target.files[0];
 
-						videoTag.onload = () => {
-							URL.revokeObjectURL(srcResult); // no longer needed, free memory
-						}
+            var srcResult = URL.createObjectURL(event.target.files[0]);
 
-						videoTag.src = srcResult;
-						
-						videoTag.play();
+            videoTag.onload = () => {
+              URL.revokeObjectURL(srcResult); // no longer needed, free memory
+            }
 
-						videoTag.classList.remove('hidden');
+            videoTag.src = srcResult;
 
-						//Generate blob from url:
-						let blob = await fetch(srcResult).then(r => r.blob());
+            videoTag.play();
 
-						//Convert image to buffer Array:
-						retreiveVideo(event.target.files[0]);
+            videoTag.classList.remove('hidden');
 
-					}
+            //Generate blob from url:
+            let blob = await fetch(srcResult).then(r => r.blob());
 
+            //Convert image to buffer Array:
+            retreiveVideo(event.target.files[0]);
 
-					uploadButtons.classList.add('hidden');
+          }
 
 
-					// show convert button
-					button.classList.remove('hidden', 'gray');
+          uploadButtons.classList.add('hidden');
 
-					//Attach run command to convert button
-					button.removeEventListener('click', convertVideo2Gif);
-					button.removeEventListener('click', convertGifToMp4);
 
-					button.addEventListener('click', convertVideo2Gif);
+          // show convert button
+          button.classList.remove('hidden', 'gray');
 
-				}
+          //Attach run command to convert button
+          button.removeEventListener('click', convertVideo2Gif);
+          button.removeEventListener('click', convertGifToMp4);
 
-			});
-			
+          button.addEventListener('click', convertVideo2Gif);
 
+        }
 
-			//Push blob to arrayBuffer of image
-			function retreiveImage(blob) {
+      });
 
-				var fileReader = new FileReader();
 
-				fileReader.onload = function(event) {
-					sampleImageData = new Uint8Array(event.target.result);
-				};
 
-				fileReader.readAsArrayBuffer(blob);
+      //Push blob to arrayBuffer of image
+      function retreiveImage(blob) {
 
-			}
+        var fileReader = new FileReader();
 
+        fileReader.onload = function(event) {
+          sampleImageData = new Uint8Array(event.target.result);
+        };
 
-			//Push blob to arrayBuffer of video
-			function retreiveVideo(file) {
+        fileReader.readAsArrayBuffer(blob);
 
-				var fileReader = new FileReader();
+      }
 
-				fileReader.onload = function(event) {
 
-					sampleVideoData = new Uint8Array(event.target.result);
+      //Push blob to arrayBuffer of video
+      function retreiveVideo(file) {
 
-				};
+        var fileReader = new FileReader();
 
-				fileReader.readAsArrayBuffer(file);
+        fileReader.onload = function(event) {
 
-			}
+          sampleVideoData = new Uint8Array(event.target.result);
 
+        };
 
-			var videoDownloadLink;
+        fileReader.readAsArrayBuffer(file);
 
+      }
 
-			//Init the ffmpeg worker
-			async function initWorker() {
 
-					if (isWorkerLoaded) return;
+      var videoDownloadLink;
 
-					console.log('Start init worker');
 
+      //Init the ffmpeg worker
+      async function initWorker() {
 
-					ffmpeg = await createFFmpeg({
-						log: true
-					});
-					
-					button.classList.remove("hidden");
-					button.classList.add("gray");
-					
-					button.style.setProperty('--load', 0);
-					
-					button.innerText = 'Loading engine...';
-					
-					await ffmpeg.load();
-					
-					filesElement = document.querySelector("#files");
-					
-				}
+        if (isWorkerLoaded) return;
 
-			//Convert mp4 264 video to gif:
-			async function convertGifToMp4() {
+        console.log('Start init worker');
 
-						//Init the wasm worker:
-						await initWorker();
 
-						//Provide array buffer format image data:
-						const sourceBuffer = sampleImageData;
+        ffmpeg = await createFFmpeg({
+          log: true
+        });
 
-						//Push it to the worker:
-						ffmpeg.FS(
-							"writeFile",
-							"input.gif",
-							new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
-						);
+        button.classList.remove("hidden");
+        button.classList.add("gray");
 
-						button.innerText = 'Processing...';
-						//Run the ffmpeg instructions:
-						startRunning();
-						
-						ffmpeg.setProgress(({ ratio }) => {
-							
-							console.log(ratio);
-							
-	
-						});
-							
-					//	let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
-						let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+        button.style.setProperty('--load', 0);
 
-						
-						//Fetch the output:
-						const output = ffmpeg.FS("readFile", "output.mp4");
+        button.innerText = 'Loading engine...';
 
-						let videoDownloadLink = getDownloadLink(output, "output.mp4");
-						filesElement.appendChild(videoDownloadLink);
+        await ffmpeg.load();
 
-						stopRunning();
+        filesElement = document.querySelector("#files");
 
-						button.innerText = 'Convert...';
-						button.classList.add("hidden");
+      }
 
-						uploadButtons.classList.remove('hidden');
+      //Convert mp4 264 video to gif:
+      async function convertGifToMp4() {
 
-						imgTag.src = '';
+        //Init the wasm worker:
+        await initWorker();
 
-						videoTag.src = '';
-						videoTag.classList.add('hidden');
+        //Provide array buffer format image data:
+        const sourceBuffer = sampleImageData;
 
-					}
+        //Push it to the worker:
+        ffmpeg.FS(
+          "writeFile",
+          "input.gif",
+          new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+        );
 
+        button.innerText = 'Processing...';
+        //Run the ffmpeg instructions:
+        startRunning();
 
+        ffmpeg.setProgress(({
+          ratio
+        }) => {
 
-			//Convert gif to mp4 264 format video:
-			async function convertVideo2Gif() {
-  
+          console.log(ratio);
 
-						let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
-						await initWorker();
+        });
 
-						const sourceBuffer = sampleVideoData; 
+        //	let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
+        let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
-						ffmpeg.FS(
-							"writeFile",
-							"input.mp4",
-							new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
-						);
-						
-						button.innerText = 'Processing...';
-						startRunning();
-						
-						
-						ffmpeg.setProgress(({ ratio }) => {
-							
-							button.style.setProperty('--load', ratio);
-							
-							if (ratio !== 0) {
-								button.innerText = 'Converting...';
-							}
-	
-						});
-						
-						
-						//Run the ffmpeg:	
-						let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
-						
-						//Retrieve the result:
-						const output = ffmpeg.FS("readFile", "output.gif");
+        //Fetch the output:
+        const output = ffmpeg.FS("readFile", "output.mp4");
 
-						//Provide downloadable link to file:
-						let videoDownloadLink = getDownloadLink(output, "output.gif");
-            if (videoDownloadLink)    
-						  filesElement.appendChild(videoDownloadLink);
-  						
-  						videoDownloadLink.click();
-  						
-  						stopRunning();
-  
-  						button.innerHTML = 'Convert';
-  						button.classList.add('hidden');
-  						button.classList.remove('gray');
-  						button.style.setProperty('--load', 0);
-						
-						
+        let videoDownloadLink = getDownloadLink(output, "output.mp4");
+        filesElement.appendChild(videoDownloadLink);
 
-						uploadButtons.classList.remove('hidden');
+        stopRunning();
 
-						imgTag.src = '';
+        button.innerText = 'Convert...';
+        button.classList.add("hidden");
 
-						videoTag.src = '';
-						videoTag.classList.add('hidden');
+        uploadButtons.classList.remove('hidden');
 
-					}
+        imgTag.src = '';
 
-			function startRunning() {
-						//button.innerHTML = 'Processing...';
-						running = true;
-					}
+        videoTag.src = '';
+        videoTag.classList.add('hidden');
 
+      }
 
-			function stopRunning() {
-						button.innerHTML = 'Convert';
-						running = false;
-					}
 
 
-			//Generate downloadable link
-			function getDownloadLink(fileData, fileName) {
+      //Convert gif to mp4 264 format video:
+      async function convertVideo2Gif() {
 
-						if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
 
-							var blob = new Blob([fileData]);
-							
-              if (navigator.share) {
-  							const	fileToShare = new File([blob], fileName);
-  							
-  							navigator.share({
-  						    files: fileToShare,
-  						    title: 'Converted GIF',
-  						    text: 'Converted GIF',
-  						  });
-              }  else {
-							
-							var src = URL.createObjectURL(blob);
-							
-							var a = document.createElement('a');
-							a.href = src;
-							a.download = fileName;
-							
-							return a;
-              
-              }
+        let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 
-						} else {
+        await initWorker();
 
-							var a = document.createElement('a');
+        const sourceBuffer = sampleVideoData;
 
-							a.classList.add('button');
+        ffmpeg.FS(
+          "writeFile",
+          "input.mp4",
+          new Uint8Array(sourceBuffer, 0, sourceBuffer.byteLength)
+        );
 
-							a.download = fileName;
-							var blob = new Blob([fileData]);
-							var src = window.URL.createObjectURL(blob);
-							a.href = src;
-							a.textContent = 'Download result';
-							return a;
-						}
-					}
-					
-					
-		
-</script>
-		
+        button.innerText = 'Processing...';
+        startRunning();
+
+
+        ffmpeg.setProgress(({
+          ratio
+        }) => {
+
+          button.style.setProperty('--load', ratio);
+
+          if (ratio !== 0) {
+            button.innerText = 'Converting...';
+          }
+
+        });
+
+
+        //Run the ffmpeg:	
+        let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+
+
+        //Retrieve the result:
+        const output = ffmpeg.FS("readFile", "output.gif");
+
+        //Provide downloadable link to file:
+        let videoDownloadLink = getDownloadLink(output, "output.gif");
+        if (videoDownloadLink)
+          filesElement.appendChild(videoDownloadLink);
+
+        videoDownloadLink.click();
+
+        stopRunning();
+
+        button.innerHTML = 'Convert';
+        button.classList.add('hidden');
+        button.classList.remove('gray');
+        button.style.setProperty('--load', 0);
+
+
+
+        uploadButtons.classList.remove('hidden');
+
+        imgTag.src = '';
+
+        videoTag.src = '';
+        videoTag.classList.add('hidden');
+
+      }
+
+      function startRunning() {
+        //button.innerHTML = 'Processing...';
+        running = true;
+      }
+
+
+      function stopRunning() {
+        button.innerHTML = 'Convert';
+        running = false;
+      }
+
+
+      //Generate downloadable link
+      function getDownloadLink(fileData, fileName) {
+
+        if (fileName.match(/\.jpeg|\.gif|\.jpg|\.png/)) {
+
+          var blob = new Blob([fileData]);
+
+          if (navigator.share) {
+            const fileToShare = new File([blob], fileName);
+
+            navigator.share({
+              files: fileToShare,
+              title: 'Converted GIF',
+              text: 'Converted GIF',
+            });
+          } else {
+
+            var src = URL.createObjectURL(blob);
+
+            var a = document.createElement('a');
+            a.href = src;
+            a.download = fileName;
+
+            return a;
+
+          }
+
+        } else {
+
+          var a = document.createElement('a');
+
+          a.classList.add('button');
+
+          a.download = fileName;
+          var blob = new Blob([fileData]);
+          var src = window.URL.createObjectURL(blob);
+          a.href = src;
+          a.textContent = 'Download result';
+          return a;
+        }
+      }
+    </script>
+
 </body>

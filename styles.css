@@ -123,35 +123,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 
-
-.group {
-  display: flex;
-  align-items: center;
-}
-
-.group.left {
-  position: absolute;
-  left: 16px;
-}
-
-.group.right {
-  position: absolute;
-  right: 16px;
-}
-
-.group .option:not(:first-of-type) {
-  margin-left: 2px;
-}
-
-.group .optionwrapper:not(:first-of-type) {
-  margin-left: 2px;
-}
-
-.group .optionwrapper.loading:first-of-type {
-  padding-right: 11px;
-}
-
-
 .loader {
   animation: loaderrotate 2s linear infinite;
   margin-left: 11px;

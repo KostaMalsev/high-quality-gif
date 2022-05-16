@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 
-
 input[type="file"] {
   display: none;
 }
@@ -164,7 +163,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 
-
 .dialog {
   position: fixed;
   top: 0;
@@ -199,9 +197,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-width: 200px;
   text-align: center;
 }
-
-
-
 
 
 @font-face {

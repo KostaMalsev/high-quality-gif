@@ -302,7 +302,6 @@
       //Convert gif to mp4 264 format video:
       async function convertVideo2Gif() {
 
-
         await initWorker();
 
         const sourceBuffer = sampleVideoData;
@@ -317,9 +316,7 @@
         startRunning();
 
 
-        ffmpeg.setProgress(({
-          ratio
-        }) => {
+        ffmpeg.setProgress(({ratio}) => {
 
           button.style.setProperty('--load', ratio);
 

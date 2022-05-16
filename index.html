@@ -1,3 +1,5 @@
+
+
 <head>
 	<title>Create Gif</title>
 	<meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
@@ -272,8 +274,9 @@
 	
 						});
 							
-						let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
-						
+					//	let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
+						let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+
 						
 						//Fetch the output:
 						const output = ffmpeg.FS("readFile", "output.mp4");
@@ -299,6 +302,7 @@
 
 			//Convert gif to mp4 264 format video:
 			async function convertVideo2Gif() {
+  
 
 						let cmnd = `-i input.mp4 -filter_complex fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse -loop 0 output.gif`
 

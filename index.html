@@ -268,7 +268,9 @@
         });
 
         //let res = await ffmpeg.run('-i', 'input.gif', '-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2', '-b:v', '0', '-crf', '25', '-f', 'mp4', '-vcodec', 'libx264', '-pix_fmt', 'rgb24', 'output.mp4');
-        let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+        //let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+				
+				let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
 
         //Fetch the output:
@@ -322,14 +324,17 @@
 
 
         //Run the ffmpeg:	
-        let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
+        //let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', 'output.gif');
 
+				let res = await ffmpeg.run('-i', 'input.mp4', '-vf', 
+							'reverse', 
+							'output.mp4');
 
         //Retrieve the result:
-        const output = ffmpeg.FS("readFile", "output.gif");
+        const output = ffmpeg.FS("readFile", "output.mp4");
 
         //Provide downloadable link to file:
-        let videoDownloadLink = getDownloadLink(output, "output.gif");
+        let videoDownloadLink = getDownloadLink(output, "output.mp4");
         if (videoDownloadLink)
           filesElement.appendChild(videoDownloadLink);
 

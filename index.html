@@ -361,6 +361,17 @@
       }
 
 
+
+      let isMobile = false;
+
+      if (navigator.userAgentData
+          && navigator.userAgentData.mobile) isMobile = true;
+      
+      if (navigator.userAgent
+          && navigator.userAgent.includes('Mobile')) isMobile = true;
+
+
+
       //Generate downloadable link
       function getDownloadLink(fileData, fileName) {
 
@@ -368,7 +379,7 @@
 
           var blob = new Blob([fileData]);
 
-          if (navigator.share) {
+          if (isMobile) {
             const fileToShare = new File([blob], fileName);
 
             navigator.share({
